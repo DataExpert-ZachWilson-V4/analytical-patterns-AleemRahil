@@ -19,3 +19,6 @@ FROM
   ranked
 WHERE
     n_r = 1
+
+
+
