@@ -37,3 +37,5 @@ SELECT
     *
 FROM
     combined
+
+
