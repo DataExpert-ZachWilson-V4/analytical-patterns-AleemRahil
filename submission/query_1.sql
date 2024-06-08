@@ -14,8 +14,8 @@ WITH
       player_name,
       first_active_season,
       last_active_season,
-      active_seasons,
-      player_state,
+      seasons_active,
+      yearly_active_state,
       season
     FROM
       aleemrahil84520.nba_players_state_tracking
@@ -25,7 +25,7 @@ WITH
     SELECT
       player_name,
       MAX(is_active) AS is_active,
-      MAX(current_season) AS active_season
+      MAX(current_season) AS seasons_active
     FROM
        bootcamp.nba_players
     WHERE
@@ -35,17 +35,17 @@ WITH
 ), combined AS (
     SELECT
         COALESCE(y.player_name, t.player_name) AS player_name,
-        COALESCE(y.first_active_season, (CASE WHEN t.is_active THEN t.active_season END)) AS first_active_season,
-        COALESCE((CASE WHEN t.is_active THEN t.active_season END), y.last_active_season) AS last_active_season,
+        COALESCE(y.first_active_season, (CASE WHEN t.is_active THEN t.seasons_active END)) AS first_active_season,
+        COALESCE((CASE WHEN t.is_active THEN t.seasons_active END), y.last_active_season) AS last_active_season,
         t.is_active,
         y.last_active_season AS y_last_active_season,
         CASE WHEN
-            y.active_seasons IS NULL THEN ARRAY[t.active_season]
-            WHEN t.active_season IS NULL THEN y.active_seasons
-            WHEN t.active_season IS NOT NULL AND t.is_active THEN ARRAY[t.active_season] || y.active_seasons
-            ELSE y.active_seasons
+            y.seasons_active IS NULL THEN ARRAY[t.seasons_active]
+            WHEN t.seasons_active IS NULL THEN y.seasons_active
+            WHEN t.seasons_active IS NOT NULL AND t.is_active THEN ARRAY[t.seasons_active] || y.seasons_active
+            ELSE y.seasons_active
         END AS seasons_active,
-        COALESCE(y.season+1, t.active_season) AS season
+        COALESCE(y.season+1, t.seasons_active) AS season
     FROM
         yesterday AS y
         FULL OUTER JOIN today AS t ON y.player_name = t.player_name
