@@ -18,7 +18,7 @@ WITH
       player_state,
       season
     FROM
-      aleemrahil84520.nba_players_track_status
+      aleemrahil84520.nba_players_state_tracking
     WHERE
       season = 2001
 ), today AS (
@@ -44,7 +44,7 @@ WITH
             WHEN t.active_season IS NULL THEN y.active_seasons
             WHEN t.active_season IS NOT NULL AND t.is_active THEN ARRAY[t.active_season] || y.active_seasons
             ELSE y.active_seasons
-        END AS active_seasons,
+        END AS seasons_active,
         COALESCE(y.season+1, t.active_season) AS season
     FROM
         yesterday AS y
@@ -54,7 +54,7 @@ SELECT
     player_name,
     first_active_season,
     last_active_season,
-    active_seasons,
+    seasons_active,
     CASE
     WHEN is_active AND first_active_season - last_active_season = 0 THEN 'New'
     WHEN is_active AND season - y_last_active_season = 1 THEN 'Continued Playing'
@@ -62,7 +62,7 @@ SELECT
     WHEN NOT is_active
     AND season - y_last_active_season = 1 THEN 'Retired'
     ELSE 'Stayed Retired'
-  END AS player_state,
+  END AS yearly_active_state,
   season
 FROM
     combined
