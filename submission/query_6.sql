@@ -36,19 +36,19 @@ with
         from
             deduped_games
     ),
-    wins_over_90_days as (
-        select
-            team_id,
-            game_date_est - interval '90' game as window_start,
-            game_date_est as window_end,
-            sum(is_win) over (
-                partition by
-                    team_id
-                order by
-                    game_date_est ROWS BETWEEN 89 PRECEDING AND CURRENT ROW
-            ) as n_wins
-        from
-            games_both_perspectives
+    wins_over_90_games as (
+    select
+        team_id,
+        game_date_est - interval '90' game as window_start,
+        game_date_est as window_end,
+        sum(is_win) over (
+            partition by
+                team_id
+            order by
+                game_date_est ROWS BETWEEN 89 PRECEDING AND CURRENT ROW
+        ) as n_wins
+    from
+        games_both_perspectives
     ), 
     teams as (
         select 
