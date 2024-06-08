@@ -49,7 +49,12 @@ with
             ) as n_wins
         from
             games_both_perspectives
+    ), 
+    teams as (
+        select distinct(team_id) as team_id,
+        select distinct(team_abbreviation) as nickname
     )
+    
 select
     t.nickname as team_name,
     max_by(w.window_start, w.n_wins) as window_start,
@@ -58,4 +63,4 @@ select
 from
     wins_over_90_days w
 join
-    bootcamp.teams t on w.team_id = t.team_id
+    teams t on w.team_id = t.team_id
