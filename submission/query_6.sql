@@ -52,8 +52,8 @@ with
     ), 
     teams as (
         select 
-            distinct(team_id) as team_id,
-            distinct(team_abbreviation) as nickname
+            distinct team_id  as team_id,
+            distinct team_abbreviation as nickname
         from bootcamp.nba_game_details
     )
     
