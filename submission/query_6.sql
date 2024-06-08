@@ -39,7 +39,7 @@ with
     wins_over_90_days as (
         select
             team_id,
-            game_date_est - interval '90' day as window_start,
+            game_date_est - interval '90' game as window_start,
             game_date_est as window_end,
             sum(is_win) over (
                 partition by
