@@ -17,7 +17,7 @@ WITH
 SELECT
   player_name,
   team,
-  points
+  total_player_points
 FROM
   ranked
 WHERE
