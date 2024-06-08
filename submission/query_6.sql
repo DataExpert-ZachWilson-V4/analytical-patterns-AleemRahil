@@ -51,9 +51,11 @@ with
             games_both_perspectives
     )
 select
-    max_by(team_id, n_wins) as team_id,
-    max_by(window_start, n_wins) as window_start,
-    max_by(window_end, n_wins) as window_end,
-    max(n_wins) max_wins_over_90_days
+    t.nickname as team_name,
+    max_by(w.window_start, w.n_wins) as window_start,
+    max_by(w.window_end, w.n_wins) as window_end,
+    max(w.n_wins) max_wins_over_90_days
 from
-    wins_over_90_days
+    wins_over_90_days w
+join
+    bootcamp.teams t on w.team_id = t.team_id
