@@ -5,7 +5,7 @@ WITH
         SELECT
             player_name,
             team,
-            points,
+            total_player_points,
             DENSE_RANK() OVER(ORDER BY points DESC) AS n_r
         FROM
             aleemrahil84520.game_details_dashboard
