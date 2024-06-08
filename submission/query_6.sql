@@ -36,7 +36,7 @@ with
         from
             deduped_games
     ),
-    wins_over_90_games as (
+    max_wins_over_90_days as (
     select
         team_id,
         game_date_est - interval '90' day as window_start,
