@@ -5,8 +5,8 @@
 -- between current season and previous active
 -- season; the difference determines the state
 -- query that does state change tracking for nba_players
-CREATE
-OR REPLACE TABLE aleemrahil84520.nba_players_state_tracking  AS
+INSERT INTO aleemrahil84520.nba_players_state_tracking
+    (player_name, first_active_season, last_active_season, seasons_active, yearly_active_state, season)
 -- subquery to select all records from the last season (1999)
 WITH
     last_year AS (
