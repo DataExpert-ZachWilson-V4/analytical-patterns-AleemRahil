@@ -15,7 +15,7 @@ WITH
       player_state,
       season
     FROM
-      sundeep.nba_players_track_status
+      aleemrahil84520.nba_players_track_status
     WHERE
       season = 2001
 ), today AS (
