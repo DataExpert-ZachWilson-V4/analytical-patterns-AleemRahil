@@ -8,7 +8,7 @@ WITH
             total_player_points,
             DENSE_RANK() OVER(ORDER BY total_player_points DESC) AS rank
         FROM
-            game_details_dashboard
+            aleemrahil84520.game_details_dashboard
         WHERE
             player_name IS NOT NULL
         AND
