@@ -8,7 +8,7 @@ WITH
             points,
             DENSE_RANK() OVER(ORDER BY points DESC) AS n_r
         FROM
-            game_details_dashboard
+            aleemrahil84520.game_details_dashboard
         WHERE
             team <> 'N/A'
         AND
