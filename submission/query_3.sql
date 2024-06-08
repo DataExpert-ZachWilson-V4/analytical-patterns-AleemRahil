@@ -23,3 +23,6 @@ FROM
 WHERE
   n_r = 1 
 
+
+
+
