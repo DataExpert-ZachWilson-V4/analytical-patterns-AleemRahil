@@ -24,3 +24,6 @@ FROM
   ranked
 WHERE
   rank = 1
+
+
+
