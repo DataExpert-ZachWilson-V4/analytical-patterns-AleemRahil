@@ -46,7 +46,6 @@ with
                     team_id
                 order by
                     game_date_est ROWS BETWEEN 89 PRECEDING AND CURRENT ROW
-                    and current row
             ) as n_wins
         from
             games_both_perspectives
