@@ -14,7 +14,7 @@ WITH
      player_name AS player_name,
      COALESCE(team_city, 'N/A') AS team,
      season,
-     SUM(a.pts) points,
+     SUM(a.pts) AS total_player_points,
      SUM(CASE
             WHEN (a.team_id = b.home_team_id AND home_team_wins = 1) OR
              (a.team_id = b.visitor_team_id AND home_team_wins = 0) THEN 1
