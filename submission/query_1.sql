@@ -9,75 +9,60 @@ INSERT INTO aleemrahil84520.nba_players_state_tracking
     (player_name, first_active_season, last_active_season, seasons_active, yearly_active_state, season)
 -- subquery to select all records from the last season (1999)
 WITH
-    last_year AS (
-        SELECT
-            *
-        FROM
-            aleemrahil84520.nba_players_state_tracking
-        WHERE
-            season = 1999
-    ),
-    -- subquery to select the maximum active season and active status for each player for the current season (2000)
-    this_year AS (
-        SELECT
-            player_name,
-            MAX(current_season) as active_season,
-            MAX(is_active) as is_active
-        FROM
-            bootcamp.nba_players
-        WHERE
-            current_season = 2000
-        GROUP BY
-            player_name
-    ),
-    -- combining data from the last year and this year
-    combined AS (
-        SELECT
-            COALESCE(ly.player_name, ty.player_name) as player_name,
-            COALESCE(
-                ly.first_active_season,
-                (
-                    CASE
-                        WHEN ty.is_active THEN ty.active_season
-                    END
-                )
-            ) as first_active_season, -- determine first active season
-            ly.last_active_season as last_active_year, -- last active season from last year's data
-            ty.is_active, -- current active status
-            COALESCE(
-                (
-                    CASE
-                        WHEN ty.is_active THEN ty.active_season
-                    END
-                ),
-                ly.last_active_season
-            ) as last_active_season, -- determine last active season
-            CASE
-                WHEN ly.seasons_active is NULL THEN ARRAY[ty.active_season]
-                WHEN ty.active_season is NULL THEN ly.seasons_active
-                ELSE ly.seasons_active || ARRAY[ty.active_season]
-            END as seasons_active,
-            COALESCE(ly.season + 1, ty.active_season) AS season
-        FROM
-            last_year ly
-            FULL OUTER JOIN this_year ty ON ly.player_name = ty.player_name
-    )
+  yesterday AS (
+    SELECT
+      player_name,
+      first_active_season,
+      last_active_season,
+      active_seasons,
+      player_state,
+      season
+    FROM
+      aleemrahil84520.nba_players_track_status
+    WHERE
+      season = 2001
+), today AS (
+    SELECT
+      player_name,
+      MAX(is_active) AS is_active,
+      MAX(current_season) AS active_season
+    FROM
+       bootcamp.nba_players
+    WHERE
+        current_season = 2002
+    GROUP BY
+      player_name
+), combined AS (
+    SELECT
+        COALESCE(y.player_name, t.player_name) AS player_name,
+        COALESCE(y.first_active_season, (CASE WHEN t.is_active THEN t.active_season END)) AS first_active_season,
+        COALESCE((CASE WHEN t.is_active THEN t.active_season END), y.last_active_season) AS last_active_season,
+        t.is_active,
+        y.last_active_season AS y_last_active_season,
+        CASE WHEN
+            y.active_seasons IS NULL THEN ARRAY[t.active_season]
+            WHEN t.active_season IS NULL THEN y.active_seasons
+            WHEN t.active_season IS NOT NULL AND t.is_active THEN ARRAY[t.active_season] || y.active_seasons
+            ELSE y.active_seasons
+        END AS active_seasons,
+        COALESCE(y.season+1, t.active_season) AS season
+    FROM
+        yesterday AS y
+        FULL OUTER JOIN today AS t ON y.player_name = t.player_name
+)
 SELECT
     player_name,
     first_active_season,
     last_active_season,
-    seasons_active,
+    active_seasons,
     CASE
-        WHEN first_active_season - last_active_season = 0
-        AND is_active THEN 'New'
-        WHEN season - last_active_year = 1
-        AND NOT is_active THEN 'Retired'
-        WHEN season - last_active_year = 1
-        AND is_active THEN 'Continued Playing'
-        WHEN season - last_active_year > 1
-        AND is_active THEN 'Returned from Retirement'
-        ELSE 'Stayed Retired'
-    END AS yearly_active_state,
-    season
+    WHEN is_active AND first_active_season - last_active_season = 0 THEN 'New'
+    WHEN is_active AND season - y_last_active_season = 1 THEN 'Continued Playing'
+    WHEN is_active AND season - y_last_active_season > 1 THEN 'Returned from Retirement'
+    WHEN NOT is_active
+    AND season - y_last_active_season = 1 THEN 'Retired'
+    ELSE 'Stayed Retired'
+  END AS player_state,
+  season
 FROM
     combined
