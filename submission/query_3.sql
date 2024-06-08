@@ -21,6 +21,5 @@ SELECT
 FROM
   ranked
 WHERE
-  n_r = 1
- 
+  n_r = 1 
 
