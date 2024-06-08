@@ -53,7 +53,7 @@ with
     teams as (
         select 
             distinct team_id  as team_id,
-            distinct team_abbreviation as nickname
+            team_abbreviation as nickname
         from bootcamp.nba_game_details
     )
     
@@ -66,3 +66,5 @@ from
     wins_over_90_days w
 join
     teams t on w.team_id = t.team_id
+GROUP BY
+    t.nickname
